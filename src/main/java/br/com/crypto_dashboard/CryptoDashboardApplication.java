@@ -1,4 +1,4 @@
-package br.com.crypto;
+package br.com.crypto_dashboard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

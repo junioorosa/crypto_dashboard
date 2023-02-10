@@ -1,4 +1,4 @@
-package br.com.crypto;
+package br.com.crypto_dashboard;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
