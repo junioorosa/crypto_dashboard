@@ -1,4 +1,4 @@
-package br.com.crypto_dashboard.Entity;
+package br.com.crypto_dashboard.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

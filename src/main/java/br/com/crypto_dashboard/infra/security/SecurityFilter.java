@@ -1,7 +1,7 @@
-package br.com.crypto_dashboard.Infra.security;
+package br.com.crypto_dashboard.infra.security;
 
-import br.com.crypto_dashboard.Repository.UsuarioRepository;
-import br.com.crypto_dashboard.Service.TokenService;
+import br.com.crypto_dashboard.repository.UsuarioRepository;
+import br.com.crypto_dashboard.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

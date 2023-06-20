@@ -1,9 +1,9 @@
-package br.com.crypto_dashboard.Controller;
+package br.com.crypto_dashboard.controller;
 
-import br.com.crypto_dashboard.DTO.DadosAutenticacao;
-import br.com.crypto_dashboard.DTO.DadosTokenJWT;
-import br.com.crypto_dashboard.Entity.Usuario;
-import br.com.crypto_dashboard.Service.TokenService;
+import br.com.crypto_dashboard.dto.DadosAutenticacao;
+import br.com.crypto_dashboard.dto.DadosTokenJWT;
+import br.com.crypto_dashboard.entity.Usuario;
+import br.com.crypto_dashboard.service.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

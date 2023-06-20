@@ -1,4 +1,4 @@
-package br.com.crypto_dashboard.DTO;
+package br.com.crypto_dashboard.dto;
 
 public record DadosAutenticacao(String login, String senha) {
 }

@@ -1,6 +1,6 @@
-package br.com.crypto_dashboard.Service;
+package br.com.crypto_dashboard.service;
 
-import br.com.crypto_dashboard.Repository.UsuarioRepository;
+import br.com.crypto_dashboard.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

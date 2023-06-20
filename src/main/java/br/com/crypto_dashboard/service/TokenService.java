@@ -1,6 +1,6 @@
-package br.com.crypto_dashboard.Service;
+package br.com.crypto_dashboard.service;
 
-import br.com.crypto_dashboard.Entity.Usuario;
+import br.com.crypto_dashboard.entity.Usuario;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 @Service
 public class TokenService {
