@@ -15,5 +15,8 @@ public class Cambio {
     @Column(name = "cam_descricao")
     private String camDescricao;
 
+    @Column(name = "cam_imagem")
+    private byte[] camImagem;
+
 }
 

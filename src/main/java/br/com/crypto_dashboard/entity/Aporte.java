@@ -23,6 +23,10 @@ public class Aporte {
     @JoinColumn(name = "carteira")
     private Carteira carteira;
 
+    @ManyToOne
+    @JoinColumn(name = "cambio")
+    private Cambio cambio;
+
     @Column(name = "apo_preco_cripto")
     private BigDecimal criPreco;
 
@@ -30,7 +34,7 @@ public class Aporte {
     @Column(name = "apo_data")
     private Date apoData;
 
-    @Column(name = "apo_valor_aportado")
+    @Column(name = "apo_valor")
     private BigDecimal apoValorAportado;
 
     @Column(name = "apo_taxa_corretora")
