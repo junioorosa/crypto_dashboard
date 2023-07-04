@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "aporte")
@@ -16,31 +16,27 @@ public class Aporte {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cripto")
+    @JoinColumn(name = "cripto_id")
     private Cripto cripto;
 
     @ManyToOne
-    @JoinColumn(name = "carteira")
-    private Carteira carteira;
-
-    @ManyToOne
-    @JoinColumn(name = "cambio")
+    @JoinColumn(name = "cambio_id")
     private Cambio cambio;
 
     @Column(name = "apo_preco_cripto")
-    private BigDecimal criPreco;
+    private BigDecimal apoPrecoCripto;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "apo_data")
-    private Date apoData;
+    private LocalDateTime apoData;
 
-    @Column(name = "apo_valor")
+    @Column(name = "apo_valor_aportado")
     private BigDecimal apoValorAportado;
 
     @Column(name = "apo_taxa_corretora")
     private BigDecimal apoTaxaCorretora;
 
     @Column(name = "apo_quantidade_cripto")
-    private Integer apoQuantidadeCripto;
+    private Double apoQuantidadeCripto;
 
 }

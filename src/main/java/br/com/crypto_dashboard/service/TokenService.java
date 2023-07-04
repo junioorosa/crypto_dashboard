@@ -21,7 +21,7 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("Crypto Dashboard")
+                    .withIssuer("crypto dashboard")
                     .withSubject(usuario.getLogin())
                     .withClaim("id", usuario.getId())
                     .withExpiresAt(dataExpiracao())
@@ -40,7 +40,7 @@ public class TokenService {
         try {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("crypto_dashboard")
+                    .withIssuer("crypto dashboard")
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
