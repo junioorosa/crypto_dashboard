@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 
 public record DadosDetalhamentoAporte(
         Long id,
-        String cripto,
-        String cambio,
-        BigDecimal precoCripto,
-        LocalDateTime data,
-        BigDecimal valorAportado,
-        BigDecimal taxaCorretora,
-        Double quantidadeCripto) {
+        String criDescricao,
+        String camDescricao,
+        BigDecimal apoPrecoCripto,
+        LocalDateTime apoData,
+        BigDecimal apoValorAportado,
+        BigDecimal apoTaxaCorretora,
+        Double apoQuantidadeCripto) {
     public DadosDetalhamentoAporte(Aporte aporte) {
         this(aporte.getId(), aporte.getCripto().getCriDescricao(), aporte.getCambio().getCamDescricao(), aporte.getApoPrecoCripto(),
                 aporte.getApoData(), aporte.getApoValorAportado(), aporte.getApoTaxaCorretora(), aporte.getApoQuantidadeCripto());
