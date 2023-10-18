@@ -1,24 +1,23 @@
 package br.com.crypto_dashboard.enums;
 
-import br.com.crypto_dashboard.service.CriptoService;
+import lombok.Getter;
 import org.springframework.http.HttpMethod;
 
+@Getter
 public enum CoinGeckoApi {
-    GET_COIN_DATA(CriptoService.BASE_URL + "coins/markets?vs_currency=%s&ids=%s&order=market_cap_desc&per_page=50&locale=en", HttpMethod.GET);
+    BASE_URL("https://api.coingecko.com/api/v3/"),
+    GET_COIN_DATA(BASE_URL.getUrl() + "coins/markets?vs_currency=%s&ids=%s&order=market_cap_desc&per_page=1&page=1&locale=en", HttpMethod.GET),
+    GET_COIN_LIST(BASE_URL.getUrl() + "coins/markets?vs_currency=%s&order=market_cap_desc&page=%s&per_page=%s&locale=en", HttpMethod.GET);
 
     private final String url;
-    private final HttpMethod method;
+    HttpMethod method;
 
     CoinGeckoApi(String url, HttpMethod method) {
         this.url = url;
         this.method = method;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public HttpMethod getMethod() {
-        return method;
+    CoinGeckoApi(String url) {
+        this.url = url;
     }
 }
