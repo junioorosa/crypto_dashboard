@@ -38,7 +38,7 @@ public class CriptoController {
         return ResponseEntity.ok(new DadosDetalhamentoCripto(cripto));
     }
 
-    @GetMapping
+    @GetMapping("/listar-cripto")
     public ResponseEntity<Page<ListaCriptoDto>> listarCriptoByApi(@RequestParam int page, @RequestParam int size) {
         Page<ListaCriptoDto> listaCripto = criptoService.getAllCriptoByApi(page, size);
         return ResponseEntity.ok(listaCripto);

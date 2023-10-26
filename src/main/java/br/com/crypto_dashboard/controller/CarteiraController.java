@@ -2,7 +2,7 @@ package br.com.crypto_dashboard.controller;
 
 import br.com.crypto_dashboard.dto.DadosAtualizaCarteira;
 import br.com.crypto_dashboard.dto.DadosCadastroCarteira;
-import br.com.crypto_dashboard.dto.DadosDetalhamentoCarteira;
+import br.com.crypto_dashboard.dto.DetalhamentoCarteiraDto;
 import br.com.crypto_dashboard.entity.Carteira;
 import br.com.crypto_dashboard.repository.CarteiraRepository;
 import br.com.crypto_dashboard.service.CarteiraService;
@@ -26,41 +26,39 @@ public class CarteiraController {
     @Autowired
     private CarteiraService carteiraService;
 
-    @PostMapping
     @Transactional
-    public ResponseEntity<DadosDetalhamentoCarteira> cadastrar(@RequestBody @Valid DadosCadastroCarteira dados) {
+    @PostMapping
+    public ResponseEntity<DetalhamentoCarteiraDto> cadastrar(@RequestBody @Valid DadosCadastroCarteira dados) {
         var carteira = new Carteira();
         BeanUtils.copyProperties(dados, carteira);
         carteiraRepository.save(carteira);
-        return ResponseEntity.ok(new DadosDetalhamentoCarteira(carteira));
+        return ResponseEntity.ok(new DetalhamentoCarteiraDto(carteira));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosDetalhamentoCarteira>> listar(@PageableDefault(sort = {"carDescricao"}, size = 10) Pageable paginacao) {
-        var carteiras = carteiraRepository.findAll(paginacao).map(DadosDetalhamentoCarteira::new);
+    public ResponseEntity<Page<DetalhamentoCarteiraDto>> listar(@PageableDefault(sort = {"carDescricao"}) Pageable paginacao) {
+        var carteiras = carteiraRepository.findAll(paginacao).map(DetalhamentoCarteiraDto::new);
         return ResponseEntity.ok(carteiras);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosDetalhamentoCarteira> detalhar(@PathVariable Long id) {
+    public ResponseEntity<DetalhamentoCarteiraDto> detalhar(@PathVariable Long id) {
         var carteira = carteiraRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoCarteira(carteira));
+        return ResponseEntity.ok(new DetalhamentoCarteiraDto(carteira));
     }
 
-    @PutMapping
     @Transactional
-    public ResponseEntity<DadosDetalhamentoCarteira> atualizar(@RequestBody @Valid DadosAtualizaCarteira dados) {
-        var carteira = carteiraRepository.getReferenceById(dados.id());
-        carteira = carteiraService.atualizaInformacoes(carteira, dados);
-        return ResponseEntity.ok(new DadosDetalhamentoCarteira(carteira));
+    @PutMapping("/{id}")
+    public ResponseEntity<DetalhamentoCarteiraDto> atualizar(@PathVariable Long id, @RequestBody @Valid DadosAtualizaCarteira dados) {
+        var carteira = carteiraService.atualizaCarteira(id, dados);
+        return ResponseEntity.ok(new DetalhamentoCarteiraDto(carteira));
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
-    @Transactional
     public ResponseEntity<Object> remover(@PathVariable Long id) {
         var carteira = carteiraRepository.getReferenceById(id);
         carteiraRepository.delete(carteira);
         return ResponseEntity.noContent().build();
     }
-
 }
