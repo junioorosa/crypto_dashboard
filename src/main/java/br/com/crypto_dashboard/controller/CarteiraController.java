@@ -1,7 +1,7 @@
 package br.com.crypto_dashboard.controller;
 
-import br.com.crypto_dashboard.dto.DadosAtualizaCarteira;
-import br.com.crypto_dashboard.dto.DadosCadastroCarteira;
+import br.com.crypto_dashboard.dto.AtualizaCarteiraDto;
+import br.com.crypto_dashboard.dto.CadastroCarteiraDto;
 import br.com.crypto_dashboard.dto.DetalhamentoCarteiraDto;
 import br.com.crypto_dashboard.entity.Carteira;
 import br.com.crypto_dashboard.repository.CarteiraRepository;
@@ -28,7 +28,7 @@ public class CarteiraController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity<DetalhamentoCarteiraDto> cadastrar(@RequestBody @Valid DadosCadastroCarteira dados) {
+    public ResponseEntity<DetalhamentoCarteiraDto> cadastrar(@RequestBody @Valid CadastroCarteiraDto dados) {
         var carteira = new Carteira();
         BeanUtils.copyProperties(dados, carteira);
         carteiraRepository.save(carteira);
@@ -49,7 +49,7 @@ public class CarteiraController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<DetalhamentoCarteiraDto> atualizar(@PathVariable Long id, @RequestBody @Valid DadosAtualizaCarteira dados) {
+    public ResponseEntity<DetalhamentoCarteiraDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizaCarteiraDto dados) {
         var carteira = carteiraService.atualizaCarteira(id, dados);
         return ResponseEntity.ok(new DetalhamentoCarteiraDto(carteira));
     }

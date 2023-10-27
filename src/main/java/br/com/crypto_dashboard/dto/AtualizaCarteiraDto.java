@@ -2,7 +2,7 @@ package br.com.crypto_dashboard.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record DadosCarteira(
+public record AtualizaCarteiraDto(
         @NotBlank String carDescricao
 ) {
 }

@@ -1,18 +1,23 @@
 package br.com.crypto_dashboard.service;
 
-import br.com.crypto_dashboard.dto.DadosCadastroCripto;
-import br.com.crypto_dashboard.dto.DetalhamentoCriptoDto;
-import br.com.crypto_dashboard.dto.ListaCriptoDto;
+import br.com.crypto_dashboard.dto.CadastroCriptoDto;
+import br.com.crypto_dashboard.dto.DetalhamentoCriptoApiDto;
+import br.com.crypto_dashboard.dto.ListaCriptoApiDto;
+import br.com.crypto_dashboard.entity.Aporte;
 import br.com.crypto_dashboard.entity.Cripto;
 import br.com.crypto_dashboard.enums.CoinGeckoApi;
 import br.com.crypto_dashboard.enums.CriptoConstants;
+import br.com.crypto_dashboard.repository.CriptoRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -23,42 +28,48 @@ import java.util.List;
 @Service
 public class CriptoService {
 
-    private final RequestService requestService;
+    @Autowired
+    private RequestService requestService;
 
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    public CriptoService(RequestService requestService, ObjectMapper objectMapper) {
-        this.requestService = requestService;
-        this.objectMapper = objectMapper;
-    }
+    @Autowired
+    private CriptoRepository criptoRepository;
 
-    public void cadastrar(Cripto cripto, DadosCadastroCripto dados) {
+    public Cripto cadastrar(CadastroCriptoDto dados) {
+        var cripto = new Cripto();
         var url = String.format(CoinGeckoApi.GET_COIN_DATA.getUrl(), CriptoConstants.USD.getValue(), dados.criIdApi());
         var response = requestService.doRequest(url, CoinGeckoApi.GET_COIN_DATA.getMethod());
+
         try {
-            List<DetalhamentoCriptoDto> detalhamentoCriptoDto = objectMapper.readValue(response, new TypeReference<>() {});
-            cripto.setCriIdApi(detalhamentoCriptoDto.get(0).id());
-            cripto.setCriDescricao(detalhamentoCriptoDto.get(0).name());
-            cripto.setCriImagem(getImagem(detalhamentoCriptoDto));
+            List<DetalhamentoCriptoApiDto> detalhamentoCriptoApiDto = objectMapper.readValue(response, new TypeReference<>() {});
+            cripto.setCriIdApi(detalhamentoCriptoApiDto.get(0).id());
+            cripto.setCriDescricao(detalhamentoCriptoApiDto.get(0).name());
+            cripto.setCriImagem(getImagem(detalhamentoCriptoApiDto));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Cripto não encontrada");
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
+
+        return criptoRepository.save(cripto);
     }
 
-    public Page<ListaCriptoDto> getAllCriptoByApi(int pageNumber, int pageSize) {
+    public Page<ListaCriptoApiDto> getAllCriptoByApi(int pageNumber, int pageSize) {
         var url = String.format(CoinGeckoApi.GET_COIN_LIST.getUrl(), CriptoConstants.USD.getValue(), pageNumber, pageSize);
         var response = requestService.doRequest(url, CoinGeckoApi.GET_COIN_LIST.getMethod());
         try {
-            List<ListaCriptoDto> listaCriptoDto = objectMapper.readValue(response, new TypeReference<>() {});
-            return new PageImpl<>(listaCriptoDto, PageRequest.of(pageNumber, pageSize), listaCriptoDto.size());
+            List<ListaCriptoApiDto> listaCriptoApiDto = objectMapper.readValue(response, new TypeReference<>() {});
+            return new PageImpl<>(listaCriptoApiDto, PageRequest.of(pageNumber, pageSize), listaCriptoApiDto.size());
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
 
-    private byte[] getImagem(List<DetalhamentoCriptoDto> detalhamentoCriptoDto) {
+    private byte[] getImagem(List<DetalhamentoCriptoApiDto> detalhamentoCriptoApiDto) {
         try {
-            URL imageUrl = new URL(detalhamentoCriptoDto.get(0).image());
+            URL imageUrl = new URL(detalhamentoCriptoApiDto.get(0).image());
             HttpURLConnection connection = (HttpURLConnection) imageUrl.openConnection();
             connection.setRequestMethod(HttpMethod.GET.name());
 
@@ -73,5 +84,10 @@ public class CriptoService {
         } catch (IOException e) {
             throw new IllegalStateException("Não foi possível obter a imagem: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    public void excluir(Aporte aporte) {
+        //todo implementar
     }
 }

@@ -1,8 +1,8 @@
 package br.com.crypto_dashboard.controller;
 
-import br.com.crypto_dashboard.dto.DadosCadastroCripto;
-import br.com.crypto_dashboard.dto.DadosDetalhamentoCripto;
-import br.com.crypto_dashboard.dto.ListaCriptoDto;
+import br.com.crypto_dashboard.dto.CadastroCriptoDto;
+import br.com.crypto_dashboard.dto.DetalhamentoCriptoDto;
+import br.com.crypto_dashboard.dto.ListaCriptoApiDto;
 import br.com.crypto_dashboard.entity.Cripto;
 import br.com.crypto_dashboard.repository.CriptoRepository;
 import br.com.crypto_dashboard.service.CriptoService;
@@ -30,17 +30,14 @@ public class CriptoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Object> cadastrar(@RequestBody @Valid DadosCadastroCripto dados) {
-        var cripto = new Cripto();
-        criptoService.cadastrar(cripto, dados);
-        BeanUtils.copyProperties(dados, cripto);
-        criptoRepository.save(cripto);
-        return ResponseEntity.ok(new DadosDetalhamentoCripto(cripto));
+    public ResponseEntity<Object> cadastrar(@RequestBody @Valid CadastroCriptoDto dados) {
+        var cripto = criptoService.cadastrar(dados);
+        return ResponseEntity.ok(new DetalhamentoCriptoDto(cripto));
     }
 
     @GetMapping("/listar-cripto")
-    public ResponseEntity<Page<ListaCriptoDto>> listarCriptoByApi(@RequestParam int page, @RequestParam int size) {
-        Page<ListaCriptoDto> listaCripto = criptoService.getAllCriptoByApi(page, size);
+    public ResponseEntity<Page<ListaCriptoApiDto>> listarCriptoByApi(@RequestParam int page, @RequestParam int size) {
+        Page<ListaCriptoApiDto> listaCripto = criptoService.getAllCriptoByApi(page, size);
         return ResponseEntity.ok(listaCripto);
     }
 
