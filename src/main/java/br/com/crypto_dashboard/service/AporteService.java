@@ -56,4 +56,13 @@ public class AporteService {
         aporteCarteira.setCarteira(dados.carteiraId() != null ? carteiraRepository.findById(dados.carteiraId()).orElseThrow(() -> new IllegalArgumentException("Carteira não encontrada")) : aporteCarteira.getCarteira());
         aporteCarteiraRepository.save(aporteCarteira);
     }
+
+    public void excluiDadosPertinentesAoAporte(Aporte aporte) {
+        if (aporteRepository.findAllByCriptoId(aporte.getCripto().getId()).size() == 1) {
+            criptoRepository.deleteByCriIdApi(aporte.getCripto().getCriIdApi());
+        }
+
+        aporteCarteiraRepository.deleteByAporteId(aporte.getId());
+        aporteRepository.delete(aporte);
+    }
 }

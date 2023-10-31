@@ -8,7 +8,6 @@ import br.com.crypto_dashboard.repository.CriptoRepository;
 import br.com.crypto_dashboard.service.CriptoService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -56,6 +55,4 @@ public class CriptoController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }

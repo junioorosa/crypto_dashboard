@@ -4,7 +4,9 @@ import br.com.crypto_dashboard.dto.AtualizaCarteiraDto;
 import br.com.crypto_dashboard.dto.CadastroCarteiraDto;
 import br.com.crypto_dashboard.dto.DetalhamentoCarteiraDto;
 import br.com.crypto_dashboard.entity.Carteira;
+import br.com.crypto_dashboard.repository.AporteRepository;
 import br.com.crypto_dashboard.repository.CarteiraRepository;
+import br.com.crypto_dashboard.service.AporteService;
 import br.com.crypto_dashboard.service.CarteiraService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -25,6 +27,12 @@ public class CarteiraController {
 
     @Autowired
     private CarteiraService carteiraService;
+
+    @Autowired
+    private AporteService aporteService;
+
+    @Autowired
+    private AporteRepository aporteRepository;
 
     @Transactional
     @PostMapping
@@ -57,6 +65,8 @@ public class CarteiraController {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> remover(@PathVariable Long id) {
+        aporteRepository.findAllByCarteiraId(id).forEach(aporte -> aporteService.excluiDadosPertinentesAoAporte(aporte));
+
         var carteira = carteiraRepository.getReferenceById(id);
         carteiraRepository.delete(carteira);
         return ResponseEntity.noContent().build();

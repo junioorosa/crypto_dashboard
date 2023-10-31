@@ -3,21 +3,18 @@ package br.com.crypto_dashboard.service;
 import br.com.crypto_dashboard.dto.CadastroCriptoDto;
 import br.com.crypto_dashboard.dto.DetalhamentoCriptoApiDto;
 import br.com.crypto_dashboard.dto.ListaCriptoApiDto;
-import br.com.crypto_dashboard.entity.Aporte;
 import br.com.crypto_dashboard.entity.Cripto;
 import br.com.crypto_dashboard.enums.CoinGeckoApi;
 import br.com.crypto_dashboard.enums.CriptoConstants;
 import br.com.crypto_dashboard.repository.CriptoRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -86,8 +83,4 @@ public class CriptoService {
         }
     }
 
-    @Transactional
-    public void excluir(Aporte aporte) {
-        //todo implementar
-    }
 }

@@ -3,14 +3,11 @@ package br.com.crypto_dashboard.controller;
 import br.com.crypto_dashboard.dto.AtualizaAporteDto;
 import br.com.crypto_dashboard.dto.CadastroAporteDto;
 import br.com.crypto_dashboard.dto.DetalhamentoAporteDto;
-import br.com.crypto_dashboard.entity.Aporte;
 import br.com.crypto_dashboard.repository.AporteCarteiraRepository;
 import br.com.crypto_dashboard.repository.AporteRepository;
 import br.com.crypto_dashboard.service.AporteService;
-import br.com.crypto_dashboard.service.CriptoService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +28,6 @@ public class AporteController {
 
     @Autowired
     private AporteCarteiraRepository aporteCarteiraRepository;
-
-    @Autowired
-    private CriptoService criptoService;
 
     @Transactional
     @PostMapping
@@ -66,9 +60,7 @@ public class AporteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> remover(@PathVariable Long id) {
         var aporte = aporteRepository.getReferenceById(id);
-        aporteCarteiraRepository.deleteByAporteId(id);
-        criptoService.excluir(aporte);
-        aporteRepository.delete(aporte);
+        aporteService.excluiDadosPertinentesAoAporte(aporte);
         return ResponseEntity.ok().build();
     }
 }
