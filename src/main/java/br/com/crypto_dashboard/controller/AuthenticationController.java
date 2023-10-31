@@ -1,7 +1,7 @@
 package br.com.crypto_dashboard.controller;
 
-import br.com.crypto_dashboard.dto.DadosAutenticacao;
-import br.com.crypto_dashboard.dto.DadosTokenJWT;
+import br.com.crypto_dashboard.infra.dto.DadosAutenticacao;
+import br.com.crypto_dashboard.infra.dto.DadosTokenJWT;
 import br.com.crypto_dashboard.entity.Usuario;
 import br.com.crypto_dashboard.service.TokenService;
 import jakarta.validation.Valid;

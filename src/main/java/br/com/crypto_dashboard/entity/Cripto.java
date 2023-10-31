@@ -15,6 +15,9 @@ public class Cripto {
     @Column(name = "cri_descricao")
     private String criDescricao;
 
+    @Column(name = "cri_id_api")
+    private String criIdApi;
+
     @Column(name = "cri_imagem")
     private byte[] criImagem;
 
