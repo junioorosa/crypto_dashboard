@@ -3,12 +3,13 @@ package br.com.crypto_dashboard.controller;
 import br.com.crypto_dashboard.dto.AtualizaAporteDto;
 import br.com.crypto_dashboard.dto.CadastroAporteDto;
 import br.com.crypto_dashboard.dto.DetalhamentoAporteDto;
+import br.com.crypto_dashboard.entity.Aporte;
+import br.com.crypto_dashboard.infra.security.UserSession;
 import br.com.crypto_dashboard.repository.AporteCarteiraRepository;
 import br.com.crypto_dashboard.repository.AporteRepository;
 import br.com.crypto_dashboard.service.AporteService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,14 +21,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/aporte")
 public class AporteController {
 
-    @Autowired
-    private AporteService aporteService;
+    private final AporteService aporteService;
 
-    @Autowired
-    private AporteRepository aporteRepository;
+    private final AporteRepository aporteRepository;
 
-    @Autowired
-    private AporteCarteiraRepository aporteCarteiraRepository;
+    private final AporteCarteiraRepository aporteCarteiraRepository;
+
+    private final UserSession userSession;
+
+    public AporteController(AporteService aporteService, AporteRepository aporteRepository, AporteCarteiraRepository aporteCarteiraRepository, UserSession userSession) {
+        this.aporteService = aporteService;
+        this.aporteRepository = aporteRepository;
+        this.aporteCarteiraRepository = aporteCarteiraRepository;
+        this.userSession = userSession;
+    }
 
     @Transactional
     @PostMapping
@@ -38,8 +45,8 @@ public class AporteController {
 
     @GetMapping
     public ResponseEntity<Page<DetalhamentoAporteDto>> listar(@PageableDefault(sort = {"apoData"}, direction = Sort.Direction.DESC) Pageable paginacao) {
-        var aportes = aporteRepository.findAll(paginacao).map(aporte -> new DetalhamentoAporteDto(aporte, aporteCarteiraRepository.getByAporteId(aporte.getId())));
-        return ResponseEntity.ok(aportes);
+        Page<Aporte> aportes = aporteRepository.findAllByUsuarioId(paginacao, userSession.getUsuario().getId());
+        return ResponseEntity.ok(aportes.map(aporte -> new DetalhamentoAporteDto(aporte, aporteCarteiraRepository.getByAporteId(aporte.getId()))));
     }
 
     @GetMapping("/{id}")

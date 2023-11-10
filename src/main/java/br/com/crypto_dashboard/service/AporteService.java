@@ -4,39 +4,50 @@ import br.com.crypto_dashboard.dto.AtualizaAporteDto;
 import br.com.crypto_dashboard.dto.CadastroAporteDto;
 import br.com.crypto_dashboard.entity.Aporte;
 import br.com.crypto_dashboard.entity.AporteCarteira;
+import br.com.crypto_dashboard.infra.security.UserSession;
 import br.com.crypto_dashboard.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AporteService {
 
-    @Autowired
-    private AporteRepository aporteRepository;
+    private final AporteRepository aporteRepository;
 
-    @Autowired
-    private CambioRepository cambioRepository;
+    private final CambioRepository cambioRepository;
 
-    @Autowired
-    private CriptoRepository criptoRepository;
+    private final CriptoRepository criptoRepository;
 
-    @Autowired
-    private CarteiraRepository carteiraRepository;
+    private final CarteiraRepository carteiraRepository;
 
-    @Autowired
-    private AporteCarteiraRepository aporteCarteiraRepository;
+    private final AporteCarteiraRepository aporteCarteiraRepository;
+
+    private final CarteiraService carteiraService;
+
+    private final UserSession userSession;
+
+    public AporteService(AporteRepository aporteRepository, CambioRepository cambioRepository, CriptoRepository criptoRepository, CarteiraRepository carteiraRepository, AporteCarteiraRepository aporteCarteiraRepository, CarteiraService carteiraService, UserSession userSession) {
+        this.aporteRepository = aporteRepository;
+        this.cambioRepository = cambioRepository;
+        this.criptoRepository = criptoRepository;
+        this.carteiraRepository = carteiraRepository;
+        this.aporteCarteiraRepository = aporteCarteiraRepository;
+        this.carteiraService = carteiraService;
+        this.userSession = userSession;
+    }
 
 
     public Aporte cadastrar(CadastroAporteDto dados) {
+        carteiraService.validaDadoUsuario(userSession.getUsuario().getId(), dados.carteiraId());
         var aporte = new Aporte();
         BeanUtils.copyProperties(dados, aporte);
-        aporte.setCambio(cambioRepository.findById(dados.cambioId()).orElseThrow(() -> new IllegalArgumentException("Câmbio não encontrado")));
-        aporte.setCripto(criptoRepository.findById(dados.criptoId()).orElseThrow(() -> new IllegalArgumentException("Cripto não encontrada")));
+        aporte.setCambio(cambioRepository.findById(dados.cambioId()).orElseThrow(EntityNotFoundException::new));
+        aporte.setCripto(criptoRepository.findById(dados.criptoId()).orElseThrow(EntityNotFoundException::new));
         aporteRepository.save(aporte);
 
         var aporteCarteira = new AporteCarteira();
-        aporteCarteira.setCarteira(carteiraRepository.findById(dados.carteiraId()).orElseThrow(() -> new IllegalArgumentException("Carteira não encontrada")));
+        aporteCarteira.setCarteira(carteiraRepository.findById(dados.carteiraId()).orElseThrow(EntityNotFoundException::new));
         aporteCarteira.setAporte(aporte);
         aporteCarteiraRepository.save(aporteCarteira);
 
@@ -53,7 +64,7 @@ public class AporteService {
         aporteRepository.save(aporte);
 
         var aporteCarteira = aporteCarteiraRepository.getByAporteId(aporte.getId());
-        aporteCarteira.setCarteira(dados.carteiraId() != null ? carteiraRepository.findById(dados.carteiraId()).orElseThrow(() -> new IllegalArgumentException("Carteira não encontrada")) : aporteCarteira.getCarteira());
+        aporteCarteira.setCarteira(dados.carteiraId() != null ? carteiraRepository.findById(dados.carteiraId()).orElseThrow(EntityNotFoundException::new) : aporteCarteira.getCarteira());
         aporteCarteiraRepository.save(aporteCarteira);
     }
 

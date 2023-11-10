@@ -21,4 +21,9 @@ public class ExceptionHandling {
         return ResponseEntity.badRequest().body(erros.stream().map(ErroValidacaoDto::new).toList());
     }
 
+    @ExceptionHandler(UserDoesNotOwnResourceException.class)
+    public ResponseEntity<Object> tratarErro404(UserDoesNotOwnResourceException ex) {
+        return ResponseEntity.notFound().build();
+    }
+
 }

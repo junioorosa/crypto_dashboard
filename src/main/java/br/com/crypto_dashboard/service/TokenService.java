@@ -17,7 +17,7 @@ public class TokenService {
     @Value("${crypto_dashboard.security.token.secret}")
     private String secret;
 
-    public String gerarToken(Usuario usuario){
+    public String gerarToken(Usuario usuario) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.create()
