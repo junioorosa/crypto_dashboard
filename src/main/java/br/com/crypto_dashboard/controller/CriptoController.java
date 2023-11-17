@@ -1,14 +1,9 @@
 package br.com.crypto_dashboard.controller;
 
-import br.com.crypto_dashboard.dto.CadastroCriptoDto;
-import br.com.crypto_dashboard.dto.DetalhamentoCriptoDto;
 import br.com.crypto_dashboard.dto.ListaCriptoApiDto;
 import br.com.crypto_dashboard.entity.Cripto;
 import br.com.crypto_dashboard.repository.CriptoRepository;
 import br.com.crypto_dashboard.service.CriptoService;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,17 +16,13 @@ import java.util.Optional;
 @RequestMapping("/cripto")
 public class CriptoController {
 
-    @Autowired
-    private CriptoRepository criptoRepository;
+    private final CriptoRepository criptoRepository;
 
-    @Autowired
-    private CriptoService criptoService;
+    private final CriptoService criptoService;
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity<Object> cadastrar(@RequestBody @Valid CadastroCriptoDto dados) {
-        var cripto = criptoService.cadastrar(dados);
-        return ResponseEntity.ok(new DetalhamentoCriptoDto(cripto));
+    public CriptoController(CriptoRepository criptoRepository, CriptoService criptoService) {
+        this.criptoRepository = criptoRepository;
+        this.criptoService = criptoService;
     }
 
     @GetMapping("/listar-cripto")

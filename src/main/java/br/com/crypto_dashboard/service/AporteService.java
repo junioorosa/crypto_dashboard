@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AporteService {
 
@@ -19,31 +21,36 @@ public class AporteService {
 
     private final CriptoRepository criptoRepository;
 
-    private final CarteiraRepository carteiraRepository;
+    private final CriptoService criptoService;
 
-    private final AporteCarteiraRepository aporteCarteiraRepository;
+    private final CarteiraRepository carteiraRepository;
 
     private final CarteiraService carteiraService;
 
+    private final AporteCarteiraRepository aporteCarteiraRepository;
+
     private final UserSession userSession;
 
-    public AporteService(AporteRepository aporteRepository, CambioRepository cambioRepository, CriptoRepository criptoRepository, CarteiraRepository carteiraRepository, AporteCarteiraRepository aporteCarteiraRepository, CarteiraService carteiraService, UserSession userSession) {
+    public AporteService(AporteRepository aporteRepository, CambioRepository cambioRepository, CriptoRepository criptoRepository, CriptoService criptoService, CarteiraRepository carteiraRepository, CarteiraService carteiraService, AporteCarteiraRepository aporteCarteiraRepository, UserSession userSession) {
         this.aporteRepository = aporteRepository;
         this.cambioRepository = cambioRepository;
         this.criptoRepository = criptoRepository;
+        this.criptoService = criptoService;
         this.carteiraRepository = carteiraRepository;
-        this.aporteCarteiraRepository = aporteCarteiraRepository;
         this.carteiraService = carteiraService;
+        this.aporteCarteiraRepository = aporteCarteiraRepository;
         this.userSession = userSession;
     }
 
 
     public Aporte cadastrar(CadastroAporteDto dados) {
-        carteiraService.validaDadoUsuario(userSession.getUsuario().getId(), dados.carteiraId());
+        carteiraService.validarCarteiraDoUsuario(userSession.getUsuario().getId(), dados.carteiraId());
+        var cripto = criptoService.cadastrar(dados.criIdApi());
+
         var aporte = new Aporte();
         BeanUtils.copyProperties(dados, aporte);
         aporte.setCambio(cambioRepository.findById(dados.cambioId()).orElseThrow(EntityNotFoundException::new));
-        aporte.setCripto(criptoRepository.findById(dados.criptoId()).orElseThrow(EntityNotFoundException::new));
+        aporte.setCripto(Optional.ofNullable(cripto).orElseThrow(EntityNotFoundException::new));
         aporteRepository.save(aporte);
 
         var aporteCarteira = new AporteCarteira();
@@ -54,8 +61,10 @@ public class AporteService {
         return aporte;
     }
 
-    public void atualizaAporte(Long id, AtualizaAporteDto dados) {
-        var aporte = aporteRepository.getReferenceById(id);
+    public AporteCarteira atualizaAporte(Long id, AtualizaAporteDto dados) {
+        carteiraService.validarCarteiraDoUsuario(userSession.getUsuario().getId(), dados.carteiraId());
+        var aporte = aporteRepository.findByIdAndUsuarioId(id, userSession.getUsuario().getId()).orElseThrow(EntityNotFoundException::new);
+
         aporte.setApoPrecoCripto(dados.apoPrecoCripto() != null ? dados.apoPrecoCripto() : aporte.getApoPrecoCripto());
         aporte.setApoData(dados.apoData() != null ? dados.apoData() : aporte.getApoData());
         aporte.setApoValorAportado(dados.apoValorAportado() != null ? dados.apoValorAportado() : aporte.getApoValorAportado());
@@ -65,7 +74,7 @@ public class AporteService {
 
         var aporteCarteira = aporteCarteiraRepository.getByAporteId(aporte.getId());
         aporteCarteira.setCarteira(dados.carteiraId() != null ? carteiraRepository.findById(dados.carteiraId()).orElseThrow(EntityNotFoundException::new) : aporteCarteira.getCarteira());
-        aporteCarteiraRepository.save(aporteCarteira);
+        return aporteCarteiraRepository.save(aporteCarteira);
     }
 
     public void excluiDadosPertinentesAoAporte(Aporte aporte) {

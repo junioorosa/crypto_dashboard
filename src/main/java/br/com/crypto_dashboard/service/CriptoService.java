@@ -1,6 +1,5 @@
 package br.com.crypto_dashboard.service;
 
-import br.com.crypto_dashboard.dto.CadastroCriptoDto;
 import br.com.crypto_dashboard.dto.DetalhamentoCriptoApiDto;
 import br.com.crypto_dashboard.dto.ListaCriptoApiDto;
 import br.com.crypto_dashboard.entity.Cripto;
@@ -9,12 +8,12 @@ import br.com.crypto_dashboard.enums.CriptoConstants;
 import br.com.crypto_dashboard.repository.CriptoRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -25,18 +24,26 @@ import java.util.List;
 @Service
 public class CriptoService {
 
-    @Autowired
-    private RequestService requestService;
+    private final RequestService requestService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private CriptoRepository criptoRepository;
+    private final CriptoRepository criptoRepository;
 
-    public Cripto cadastrar(CadastroCriptoDto dados) {
+    public CriptoService(RequestService requestService, ObjectMapper objectMapper, CriptoRepository criptoRepository) {
+        this.requestService = requestService;
+        this.objectMapper = objectMapper;
+        this.criptoRepository = criptoRepository;
+    }
+
+    public Cripto cadastrar(String criIdApi) {
+        var cri = criptoRepository.findByCriIdApi(criIdApi);
+        if (cri.isPresent()) {
+            return cri.get();
+        }
+
         var cripto = new Cripto();
-        var url = String.format(CoinGeckoApi.GET_COIN_DATA.getUrl(), CriptoConstants.USD.getValue(), dados.criIdApi());
+        var url = String.format(CoinGeckoApi.GET_COIN_DATA.getUrl(), CriptoConstants.USD.getValue(), criIdApi);
         var response = requestService.doRequest(url, CoinGeckoApi.GET_COIN_DATA.getMethod());
 
         try {
@@ -44,10 +51,8 @@ public class CriptoService {
             cripto.setCriIdApi(detalhamentoCriptoApiDto.get(0).id());
             cripto.setCriDescricao(detalhamentoCriptoApiDto.get(0).name());
             cripto.setCriImagem(getImagem(detalhamentoCriptoApiDto));
-        } catch (IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Cripto não encontrada");
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new ResourceAccessException("Cripto não encontrada: " + e.getMessage());
         }
 
         return criptoRepository.save(cripto);

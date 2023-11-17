@@ -26,7 +26,7 @@ public class CarteiraService {
         return carteira;
     }
 
-    public UsuarioCarteira validaDadoUsuario(Long userId, Long id) {
-        return usuarioCarteiraRepository.getByUsuarioIdAndCarteiraId(userId, id).orElseThrow(UserDoesNotOwnResourceException::new);
+    public UsuarioCarteira validarCarteiraDoUsuario(Long userId, Long carteiraId) {
+        return usuarioCarteiraRepository.getByUsuarioIdAndCarteiraId(userId, carteiraId).orElseThrow(UserDoesNotOwnResourceException::new);
     }
 }

@@ -5,7 +5,6 @@ import br.com.crypto_dashboard.infra.dto.DadosTokenJWT;
 import br.com.crypto_dashboard.entity.Usuario;
 import br.com.crypto_dashboard.service.TokenService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,11 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/login")
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationManager manager;
 
-    @Autowired
-    private TokenService tokenService;
+    private final AuthenticationManager manager;
+
+    private final TokenService tokenService;
+
+    public AuthenticationController(AuthenticationManager manager, TokenService tokenService) {
+        this.manager = manager;
+        this.tokenService = tokenService;
+    }
 
     @PostMapping
     public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DadosAutenticacao dadosAutenticacao) {

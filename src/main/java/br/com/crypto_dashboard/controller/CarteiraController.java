@@ -69,7 +69,7 @@ public class CarteiraController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DetalhamentoCarteiraDto> detalhar(@PathVariable Long id) {
-        carteiraService.validaDadoUsuario(id, id);
+        carteiraService.validarCarteiraDoUsuario(userSession.getUsuario().getId(), id);
         var carteira = carteiraRepository.getReferenceById(id);
         return ResponseEntity.ok(new DetalhamentoCarteiraDto(carteira));
     }
@@ -77,7 +77,7 @@ public class CarteiraController {
     @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<DetalhamentoCarteiraDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizaCarteiraDto dados) {
-        carteiraService.validaDadoUsuario(userSession.getUsuario().getId(), id);
+        carteiraService.validarCarteiraDoUsuario(userSession.getUsuario().getId(), id);
         var carteira = carteiraService.atualizaCarteira(id, dados);
         return ResponseEntity.ok(new DetalhamentoCarteiraDto(carteira));
     }
@@ -85,7 +85,7 @@ public class CarteiraController {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> remover(@PathVariable Long id) {
-        var usuarioCarteira = carteiraService.validaDadoUsuario(userSession.getUsuario().getId(), id);
+        var usuarioCarteira = carteiraService.validarCarteiraDoUsuario(userSession.getUsuario().getId(), id);
         usuarioCarteiraRepository.delete(usuarioCarteira);
         aporteRepository.findAllByCarteiraId(id).forEach(aporteService::excluiDadosPertinentesAoAporte);
         var carteira = carteiraRepository.getReferenceById(id);

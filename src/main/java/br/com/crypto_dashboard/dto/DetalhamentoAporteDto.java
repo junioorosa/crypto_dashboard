@@ -1,6 +1,5 @@
 package br.com.crypto_dashboard.dto;
 
-import br.com.crypto_dashboard.entity.Aporte;
 import br.com.crypto_dashboard.entity.AporteCarteira;
 
 import java.math.BigDecimal;
@@ -17,9 +16,9 @@ public record DetalhamentoAporteDto(
         Double apoQuantidadeCripto,
         String carDescricao
 ) {
-    public DetalhamentoAporteDto(Aporte aporte, AporteCarteira aporteCarteira) {
-        this(aporte.getId(), aporte.getCripto().getCriDescricao(), aporte.getCambio().getCamDescricao(), aporte.getApoPrecoCripto(),
-                aporte.getApoData(), aporte.getApoValorAportado(), aporte.getApoTaxaCorretora(), aporte.getApoQuantidadeCripto(),
-                aporteCarteira.getCarteira().getCarDescricao());
+    public DetalhamentoAporteDto(AporteCarteira aporteCarteira) {
+        this(aporteCarteira.getAporte().getId(), aporteCarteira.getAporte().getCripto().getCriDescricao(), aporteCarteira.getAporte().getCambio().getCamDescricao(),
+                aporteCarteira.getAporte().getApoPrecoCripto(), aporteCarteira.getAporte().getApoData(), aporteCarteira.getAporte().getApoValorAportado(),
+                aporteCarteira.getAporte().getApoTaxaCorretora(), aporteCarteira.getAporte().getApoQuantidadeCripto(), aporteCarteira.getCarteira().getCarDescricao());
     }
 }
